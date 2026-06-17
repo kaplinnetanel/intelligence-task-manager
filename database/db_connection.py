@@ -1,6 +1,7 @@
 import mysql.connector
 
 class DB_connection:
+
     def get_connection(self):
         return mysql.connector.connect(
             host = "localhost",
@@ -9,13 +10,13 @@ class DB_connection:
             password = "1234",
             database = "Intelligence_db"
         )
-    # def create_database(self):
-    #     conn = self.get_connection()
-    #     cursor = conn.cursor()
-    #     cursor.execute("CREATE DATABASE IF NOT EXISTS Intelligence_db;")
-    #     conn.commit()
-    #     cursor.close()
-    #     conn.close()   
+    def create_database(self):
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute("CREATE DATABASE IF NOT EXISTS Intelligence_db;")
+        conn.commit()
+        cursor.close()
+        conn.close()   
 
     def create_tables(self):
         conn = self.get_connection()
@@ -40,7 +41,6 @@ class DB_connection:
             assigned_agent_id int );""" 
         cursor.execute(agents)
         cursor.execute(missions)
-        print("okkkkkkkkk")
         conn.commit()
         cursor.close()
         conn.close()
