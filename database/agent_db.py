@@ -106,4 +106,3 @@ class AgentDB:
         return count_active
 
 
-    
