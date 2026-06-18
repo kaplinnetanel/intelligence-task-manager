@@ -32,7 +32,7 @@ class AgentDB:
     
     def get_agent_by_id(self,id):
         conn = self.db_maneger.get_connection()
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
         sql = "SELECT * FROM agents WHERE id = %s;"
         cursor.execute(sql,(id,))
         row = cursor.fetchone()

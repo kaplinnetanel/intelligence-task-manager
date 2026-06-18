@@ -28,7 +28,7 @@ def get_all_agent():
 def get_agent_id(id: int):
      logger.info("A request has been sent to the database.")
      agent_id = agenr.get_agent_by_id(id)
-     if agent_id is None:
+     if not agent_id :
          logger.error("Requested soldier not found")
          raise HTTPException(400,"Requested soldier not found")
      return agent_id
@@ -36,7 +36,7 @@ def get_agent_id(id: int):
 @routes_agent.put("/{id}")
 def update_agent_by_id(id: int,data:dict):
     agent_id = agenr.get_agent_by_id(id)
-    if agent_id is None:
+    if not agent_id :
          logger.error("A request has been sent to the database")
          raise HTTPException(404,"Requested soldier not found")
     logger.info("RRequest found sent from update_agent")
@@ -52,7 +52,7 @@ def deactivate(id:int):
 @routes_agent.get("/{id}/performance")
 def agent_performance_by_id(id: int):
     agent_id = agenr.get_agent_by_id(id)
-    if agent_id is None:
+    if not agent_id:
          logger.error("A request has been sent to the database")
          raise HTTPException(404,"Requested soldier not found")
     logger.info("Request found sent from get agent performance")

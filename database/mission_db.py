@@ -9,16 +9,16 @@ class MissionDB:
         conn = self.db_maneger.get_connection()
         cursor = conn.cursor()
         try:
-            sql ="""INSERT INTO table_name (title, description, location, difficulty, importance, risk_level)
-            VALUES (%s,%s,%s,%s,%s,%s);"""
+            sql ="""INSERT INTO table_name (title, description, location, difficulty, importance,status, risk_level,assigned_agent_id)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s);"""
             risk_level = (data["difficulty"] * 2) + data["importance"]
             if risk_level > 25:
                     risk_level ="CRITICAL"
             elif  17 < risk_level <25:
                 risk_level = "HIGH"
-            elif 9 < risk_level < 18:
+            elif 0 < risk_level < 18:
                 risk_level = "MEDIU"    
-            cursor.execute(sql,(data["status"],data["description"],data["location"],data["importance"],risk_level))
+            cursor.execute(sql,(data["title"],data["description"],data["location"],data["difficulty"],data["importance"],"NEW",risk_level,None))
             return True
         except Exception as e:
             return False
@@ -37,10 +37,10 @@ class MissionDB:
         conn.close()
         return rows
     
-    
+
     def get_mission_by_id(self,id):
         conn = self.db_maneger.get_connection()
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary= True)
         sql = "SELECT * FROM missions WHERE id = %s;"
         cursor.execute(sql,(id,))
         row = cursor.fetchone()
@@ -54,7 +54,7 @@ class MissionDB:
             cursor = conn.cursor()
             sql = "UPDATE missions SET assigned_agent_id = %s WHERE id = %s;"
             cursor.execute(sql,(a_id,m_id))
-            return "ASSIGENED"
+            return True
         except Exception as e:
             print(f"Your problem :{e}") 
             return "FAILED"
@@ -69,10 +69,10 @@ class MissionDB:
             cursor = conn.cursor()
             sql = "UPDATE missions SET status = %s WHERE id = %s;"
             cursor.execute(sql,(status,id))
-            return "COMPLETED"
+            return True
         except Exception as e:
             print(f"Your problem :{e}") 
-            return "FAILED"
+            return False
         finally:       
             conn.commit()
             cursor.close()
@@ -81,7 +81,7 @@ class MissionDB:
     def get_open_missions_by_agent(self, id):
         conn = self.db_maneger.get_connection()
         cursor = conn.cursor()
-        sql = "SELECT * FROM missions WHERE id = %s AND status = ASSIGNED  OR  status = IN_PROGRESS;"
+        sql = "SELECT * FROM missions WHERE assigned_agent_id = %s AND status = ASSIGNED  OR  status = IN_PROGRESS;"
         cursor.execute(sql,(id,))
         row = cursor.fetchall()
         cursor.close()
@@ -91,7 +91,7 @@ class MissionDB:
     def count_all_missions(self):
         conn = self.db_maneger.get_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT COUNT(*) FROM missions ;")
+        cursor.execute("SELECT COUNT(*) FROM missions;")
         count = cursor.fetchone()
         count_missions = count[0]
         cursor.close()
@@ -112,7 +112,7 @@ class MissionDB:
     def count_open_missions(self):
         conn = self.db_maneger.get_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT COUNT(*) FROM missions WHERE status = ASSIGNED OR status = IN_PROGRESS;")
+        cursor.execute("SELECT COUNT(status) FROM missions WHERE status = IN_PROGRES or status = ASSIGNED or status = NEW ;")
         count = cursor.fetchone()
         count_missions = count[0]
         cursor.close()
@@ -133,13 +133,9 @@ class MissionDB:
     def get_top_agent(self):
         conn = self.db_maneger.get_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT MAX() completed_missions FROM agents;")
+        cursor.execute("SELECT MAX(completed_missions) FROM agents;")
         row = cursor.fetchone()
         cursor.close()
         conn.close()
         return row
     
-# a = MissionDB()
-# print(22222222)
-# print(a.count_all_missions())
-# print(a.count_open_missions())    

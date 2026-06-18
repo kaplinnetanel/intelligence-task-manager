@@ -7,23 +7,18 @@ logger = logging.getLogger(__name__)
 
 report_router = APIRouter()
 agent = AgentDB()
-mission = MissionDB()
+miss = MissionDB()
 
 @report_router.get("/summary")
 def get_summary():
     try:    
         logger.info("Request sent to database")
         active_agents_count = agent.count_active_agents()
-        print(1)
-        total_missions = mission.count_all_missions()
-        print(1)
-        open_missions = mission.count_open_missions()
-        print(2)
-        completed_missions = mission.count_by_status("COMPLETED")
-        print(3)
-        failed_missions = mission.count_by_status("FAILED")
-        print(4)
-        critical_mission = mission.count_critical_missions()
+        total_missions = miss.count_all_missions()
+        open_missions = miss.count_open_missions()
+        completed_missions = miss.count_by_status("COMPLETED")
+        failed_missions = miss.count_by_status("FAILED")
+        critical_mission = miss.count_critical_missions()
         logger.info("Request found Sent from get_summary")
         return {
             "active_agents_count":{active_agents_count},
@@ -41,18 +36,20 @@ def get_summary():
 def get_missions_by_status():
     try:    
         logger.info("Request sent to database")
-        new =  mission.count_by_status("new")
-        assigned = mission.count_by_status("ASSIGNED")
-        in_progress = mission.count_by_status("IN_PROGRESS")
-        completed = mission.count_by_status("COMPLETED")
-        faild = mission.count_by_status("FAILED")
-        cancelled = mission.count_by_status("CANCELLED")
+        new =  miss.count_by_status("new")
+        assigned = miss.count_by_status("ASSIGNED")
+        in_progress = miss.count_by_status("IN_PROGRESS")
+        completed = miss.count_by_status("COMPLETED")
+        faild = miss.count_by_status("FAILED")
+        cancelled = miss.count_by_status("CANCELLED")
         return {
             "NEW" : new,
             "ASSIGNED" : assigned,
-            "IN_PROGRESS" :  
+            "IN_PROGRESS" : in_progress,
+            "COMPLETED": completed,
+            "FAILED": faild,
+            "cancelled":cancelled
         }
-
     except Exception as e:
         logger.error(f"Request failed due to{e}")
         raise HTTPException(400, f"Request failed due to {e}")    
@@ -61,6 +58,6 @@ def get_missions_by_status():
 @report_router.get("/top-agent")
 def get_top_agent():
      logger.info("Request sent to database")
-     top = mission.get_top_agent()
+     top = miss.get_top_agent()
      logger.info("Request found Sent from get_top_agent")
      return f"top_agent {top}"

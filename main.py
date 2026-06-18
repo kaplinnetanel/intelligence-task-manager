@@ -1,3 +1,4 @@
+from database.db_connection import DB_connection
 from routes.agent_routes import routes_agent
 from routes.mission_routes import mission_routes
 from routes.report_routes import report_router
@@ -5,7 +6,9 @@ from fastapi import FastAPI
 import uvicorn
 import logging
 
+con = DB_connection()
 app = FastAPI()
+con.create_tables()
 
 logger = logging.basicConfig(filename='app.log', level=logging.DEBUG,format="%(levelname)s:%(message)s:%(asctime)s")
 
