@@ -55,5 +55,5 @@ def agent_performance_by_id(id: int):
     if not agent_id:
          logger.error("A request has been sent to the database")
          raise HTTPException(404,"Requested soldier not found")
-    logger.info("Request found sent from get agent performance")
+    logger.info("Request found sent from get agent performance agent_by_id")
     return agenr.get_agent_performance(id)
