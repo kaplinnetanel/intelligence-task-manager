@@ -1,4 +1,4 @@
-from db_connection import DB_connection
+from database.db_connection import DB_connection
 
 
 class AgentDB:
@@ -6,17 +6,21 @@ class AgentDB:
         self.db_maneger = DB_connection()
 
     def create_agent(self,data):
-        conn = self.db_maneger.get_connection()
-        cursor = conn.cursor()
-        sql ="""INSERT INTO table_name (name,specialty, is_active, completed_mission,
-        failed_missions,agent_rank)
-        VALUES (%s,%s,%s,%s,%s,%s);"""
-        cursor.execute(sql,(data["name"],data["specialty"],data["is_active"],data["completed_mission"],data["failed_missions"],data["agent_rank"]))
-        conn.commit()
-        cursor.close()
-        conn.close()
-        return data
-
+        try:
+            conn = self.db_maneger.get_connection()
+            cursor = conn.cursor()
+            sql ="""INSERT INTO table_name (name,specialty, is_active, completed_mission,
+            failed_missions,agent_rank)
+            VALUES (%s,%s,%s,%s,%s,%s);"""
+            cursor.execute(sql,(data["name"],data["specialty"],data["is_active"],data["completed_mission"],data["failed_missions"],data["agent_rank"]))
+            return data
+        except Exception as e:
+            return f"Your error in {e}" 
+        finally:  
+            conn.commit()
+            cursor.close()
+            conn.close()
+    
     def get_all_agents(self):
         conn = self.db_maneger.get_connection()
         cursor = conn.cursor(dictionary= True)
@@ -47,7 +51,7 @@ class AgentDB:
         conn.close()
         return "COMPLETED"
 
-    def agent_rank(self,id):
+    def deactivate_agent(self,id):
         conn = self.db_maneger.get_connection()
         cursor = conn.cursor()
         sql = "UPDATE agents SET  is_active = %s WHERE id = %s;"

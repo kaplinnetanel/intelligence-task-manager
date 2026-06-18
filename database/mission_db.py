@@ -1,4 +1,4 @@
-from db_connection import DB_connection
+from database.db_connection import DB_connection
 
 
 class MissionDB:
@@ -10,7 +10,13 @@ class MissionDB:
         cursor = conn.cursor()
         sql ="""INSERT INTO table_name (title, description, location, difficulty, importance, risk_level)
         VALUES (%s,%s,%s,%s,%s,%s);"""
-        risk_level = (data["difficulty"] * 2) + data["importance"] 
+        risk_level = (data["difficulty"] * 2) + data["importance"]
+        if risk_level > 25:
+                risk_level ="CRITICAL"
+        elif  17 < risk_level <25:
+            risk_level = "HIGH"
+        elif 9 < risk_level < 18:
+            risk_level = "MEDIU"    
         cursor.execute(sql,(data["status"],data["description"],data["location"],data["importance"],risk_level))
         conn.commit()
         cursor.close()
@@ -112,7 +118,7 @@ class MissionDB:
     def count_critical_missions(self):
         conn = self.db_maneger.get_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM missions WHERE risk_level BETWEEN 25 AND 100000;")
+        cursor.execute("SELECT * FROM missions WHERE risk_level = CRITICAL ;")
         rows = cursor.fetchall()
         cursor.close()
         conn.close()
@@ -122,9 +128,9 @@ class MissionDB:
     def get_top_agent(self):
         conn = self.db_maneger.get_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT MAX(Price) completed_missions FROM agents;")
+        cursor.execute("SELECT MAX(completed_missions) completed_missions FROM agents;")
         row = cursor.fetchone()
         cursor.close()
         conn.close()
         return row
-        
+    
