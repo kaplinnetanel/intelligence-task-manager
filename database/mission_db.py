@@ -8,19 +8,24 @@ class MissionDB:
     def create_mission(self,data):
         conn = self.db_maneger.get_connection()
         cursor = conn.cursor()
-        sql ="""INSERT INTO table_name (title, description, location, difficulty, importance, risk_level)
-        VALUES (%s,%s,%s,%s,%s,%s);"""
-        risk_level = (data["difficulty"] * 2) + data["importance"]
-        if risk_level > 25:
-                risk_level ="CRITICAL"
-        elif  17 < risk_level <25:
-            risk_level = "HIGH"
-        elif 9 < risk_level < 18:
-            risk_level = "MEDIU"    
-        cursor.execute(sql,(data["status"],data["description"],data["location"],data["importance"],risk_level))
-        conn.commit()
-        cursor.close()
-        conn.close()
+        try:
+            sql ="""INSERT INTO table_name (title, description, location, difficulty, importance, risk_level)
+            VALUES (%s,%s,%s,%s,%s,%s);"""
+            risk_level = (data["difficulty"] * 2) + data["importance"]
+            if risk_level > 25:
+                    risk_level ="CRITICAL"
+            elif  17 < risk_level <25:
+                risk_level = "HIGH"
+            elif 9 < risk_level < 18:
+                risk_level = "MEDIU"    
+            cursor.execute(sql,(data["status"],data["description"],data["location"],data["importance"],risk_level))
+            return True
+        except Exception as e:
+            return False
+        finally:    
+            conn.commit()
+            cursor.close()
+            conn.close()
 
 
     def get_all_missions(self):
@@ -128,9 +133,13 @@ class MissionDB:
     def get_top_agent(self):
         conn = self.db_maneger.get_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT MAX(completed_missions) completed_missions FROM agents;")
+        cursor.execute("SELECT MAX() completed_missions FROM agents;")
         row = cursor.fetchone()
         cursor.close()
         conn.close()
         return row
     
+# a = MissionDB()
+# print(22222222)
+# print(a.count_all_missions())
+# print(a.count_open_missions())    

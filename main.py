@@ -1,4 +1,6 @@
 from routes.agent_routes import routes_agent
+from routes.mission_routes import mission_routes
+from routes.report_routes import report_router
 from fastapi import FastAPI
 import uvicorn
 import logging
@@ -11,6 +13,9 @@ logger = logging.getLogger(__name__)
 
 app.include_router(routes_agent,prefix="/agents",tags=["agents"])
 
+app.include_router(mission_routes,prefix="/missions",tags=["mission"])
+
+app.include_router(report_router,prefix="/reports",tags=["report"])
 
 
 if __name__ == "__maim__":
